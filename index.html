@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Carte Vélo</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <style>
+    body { margin: 0; }
+    #map { height: 100vh; }
+
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 8px;
+      z-index: 1000;
+      font-family: Arial;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+
+    button {
+      padding: 8px 12px;
+      border: none;
+      background: #28a745;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<div id="info">
+  <p>📍 Autoriser la localisation pour voir votre position</p>
+  <button onclick="activerLocalisation()">Activer ma position</button>
+</div>
+
+<div id="map"></div>
+
+<script>
+  // Initialisation carte (centrée sur ta commune à modifier)
+  var map = L.map('map').setView([48.8566, 2.3522], 13);
+
+  // Fond de carte
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+
+  // Bouton localisation
+  function activerLocalisation() {
+    map.locate({ setView: true, maxZoom: 16 });
+  }
+
+  // Quand position trouvée
+  function onLocationFound(e) {
+    L.marker(e.latlng).addTo(map)
+      .bindPopup("Vous êtes ici 🚴‍♂️").openPopup();
+
+    L.circle(e.latlng, {
+      radius: e.accuracy,
+      color: 'blue',
+      fillOpacity: 0.1
+    }).addTo(map);
+
+    document.getElementById("info").style.display = "none";
+  }
+
+  function onLocationError(e) {
+    alert("Impossible d'accéder à la localisation");
+  }
+
+  map.on('locationfound', onLocationFound);
+  map.on('locationerror', onLocationError);
+
+  // ==========================
+  // 👉 AJOUT DE TES GEOJSON ICI
+  // ==========================
+
+  fetch("traces.geojson") // 🔁 remplace par ton fichier
+    .then(res => res.json())
+    .then(data => {
+      L.geoJSON(data, {
+        style: {
+          color: "green",
+          weight: 4
+        }
+      }).addTo(map);
+    })
+    .catch(err => console.log(err));
+
+</script>
+
+</body>
+</html>
