@@ -78,33 +78,35 @@
   map.on('locationfound', onLocationFound);
   map.on('locationerror', onLocationError);
 
-  // Charger les traces cyclables avec couleurs par type
-  fetch("Traces_cyclable.geojson")
-    .then(res => res.json())
-    .then(data => {
-      L.geoJSON(data, {
-        style: function(feature) {
-          let color = "green";
-          let typeTrace = feature.properties["Type de tracé"];
-          
-          if (typeTrace === "Voie verte") {
-            color = "green";
-          } else if (typeTrace === "Piste cyclable") {
-            color = "blue";
-          } else if (typeTrace === "Bande cyclable") {
-            color = "orange";
-          } else if (typeTrace === "CVCB") {
-            color = "red";
-          }
-          
-          return {
-            color: color,
-            weight: 4
-          };
+// Charger les traces cyclables avec couleurs par type
+fetch("Traces_cyclable.geojson")
+  .then(res => res.json())
+  .then(data => {
+    L.geoJSON(data, {
+      onEachFeature: function(feature, layer) {
+        let typeTrace = feature.properties["Type de tracé"];
+        let color = "green";
+        
+        console.log("Type de tracé:", typeTrace); // Pour déboguer
+        
+        if (typeTrace === "Voie verte") {
+          color = "green";
+        } else if (typeTrace === "Piste cyclable") {
+          color = "blue";
+        } else if (typeTrace === "Bande cyclable") {
+          color = "orange";
+        } else if (typeTrace === "CVCB") {
+          color = "red";
         }
-      }).addTo(map);
-    })
-    .catch(err => console.log(err));
+        
+        layer.setStyle({
+          color: color,
+          weight: 4
+        });
+      }
+    }).addTo(map);
+  })
+  .catch(err => console.log(err));
 
 </script>
 
