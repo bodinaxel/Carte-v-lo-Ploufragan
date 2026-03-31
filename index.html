@@ -78,7 +78,7 @@
   map.on('locationfound', onLocationFound);
   map.on('locationerror', onLocationError);
 
- // Charger les traces cyclables avec couleurs par type
+  // Charger les traces cyclables avec couleurs par type
   fetch("Traces_cyclable.geojson")
     .then(res => res.json())
     .then(data => {
