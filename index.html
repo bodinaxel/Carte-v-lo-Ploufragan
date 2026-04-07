@@ -20,7 +20,7 @@
       background: white;
       padding: 40px;
       border-radius: 8px;
-      z-index: 1000;
+      z-index: 9999; /* 🔥 important */
       font-family: Arial;
       box-shadow: 0 0 10px rgba(0,0,0,0.2);
       text-align: center;
@@ -48,14 +48,16 @@
   <p style="font-size: 24px; margin: 20px 0;">
     📍 Autoriser la localisation pour voir votre position
   </p>
-  <button onclick="activerLocalisation()">Activer ma position</button>
-  <button class="btn-refuser" onclick="refuserLocalisation()">Refuser</button>
+  <button id="btnActiver">Activer ma position</button>
+  <button id="btnRefuser" class="btn-refuser">Refuser</button>
 </div>
 
 <div id="map"></div>
 
 <script>
-  // Initialisation carte (centrée sur Ploufragan)
+document.addEventListener("DOMContentLoaded", function () {
+
+  // Initialisation carte
   var map = L.map('map').setView([48.4906, -2.7950], 13);
 
   // Fond de carte
@@ -63,18 +65,15 @@
     attribution: '&copy; OpenStreetMap'
   }).addTo(map);
 
-  // Activer localisation
-  function activerLocalisation() {
+  // Boutons
+  document.getElementById("btnActiver").addEventListener("click", function() {
     map.locate({ setView: true, maxZoom: 16 });
-  }
+  });
 
-  // Refuser localisation
-  function refuserLocalisation() {
+  document.getElementById("btnRefuser").addEventListener("click", function() {
     document.getElementById("info").style.display = "none";
-
-    // Recentrer sur la vue par défaut
     map.setView([48.4906, -2.7950], 13);
-  }
+  });
 
   // Position trouvée
   function onLocationFound(e) {
@@ -93,18 +92,14 @@
 
   // Erreur localisation
   function onLocationError(e) {
-    if (e.code === 1) {
-      // Refus utilisateur
-      document.getElementById("info").innerHTML = `
-        <p style="font-size: 20px;">❌ Localisation refusée</p>
-        <button onclick="activerLocalisation()">Réessayer</button>
-      `;
-    } else {
-      document.getElementById("info").innerHTML = `
-        <p style="font-size: 20px;">⚠️ Impossible d'accéder à la localisation</p>
-        <button onclick="activerLocalisation()">Réessayer</button>
-      `;
-    }
+    document.getElementById("info").innerHTML = `
+      <p style="font-size: 20px;">❌ Localisation refusée ou indisponible</p>
+      <button id="retry">Réessayer</button>
+    `;
+
+    document.getElementById("retry").addEventListener("click", function() {
+      map.locate({ setView: true, maxZoom: 16 });
+    });
   }
 
   map.on('locationfound', onLocationFound);
@@ -119,15 +114,10 @@
           let typeTrace = feature.properties["Type de tracé"];
           let color = "green";
           
-          if (typeTrace === "Voie verte") {
-            color = "green";
-          } else if (typeTrace === "Piste cyclable") {
-            color = "blue";
-          } else if (typeTrace === "Bande cyclable") {
-            color = "orange";
-          } else if (typeTrace === "CVCB") {
-            color = "red";
-          }
+          if (typeTrace === "Voie verte") color = "green";
+          else if (typeTrace === "Piste cyclable") color = "blue";
+          else if (typeTrace === "Bande cyclable") color = "orange";
+          else if (typeTrace === "CVCB") color = "red";
 
           return {
             color: color,
@@ -138,6 +128,7 @@
     })
     .catch(err => console.log(err));
 
+});
 </script>
 
 </body>
