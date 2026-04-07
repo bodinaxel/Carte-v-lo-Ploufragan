@@ -49,6 +49,22 @@
       cursor: pointer;
       font-size: 16px;
     }
+
+    /* Légende */
+    .info.legend {
+      background: white;
+      padding: 10px 15px;
+      font-size: 14px;
+      line-height: 18px;
+      color: #333;
+      border-radius: 6px;
+      box-shadow: 0 0 6px rgba(0,0,0,0.2);
+    }
+
+    .info.legend h4 {
+      margin: 0 0 5px;
+      font-size: 16px;
+    }
   </style>
 </head>
 <body>
@@ -143,6 +159,25 @@ document.addEventListener("DOMContentLoaded", function () {
       }).addTo(map);
     })
     .catch(err => console.log(err));
+
+  // Légende
+  var legend = L.control({ position: "bottomright" });
+
+  legend.onAdd = function (map) {
+    var div = L.DomUtil.create("div", "info legend");
+
+    div.innerHTML = `
+      <h4>Légende</h4>
+      <div><span style="background:green;width:15px;height:15px;display:inline-block;margin-right:8px;"></span>Voie verte</div>
+      <div><span style="background:blue;width:15px;height:15px;display:inline-block;margin-right:8px;"></span>Piste cyclable</div>
+      <div><span style="background:orange;width:15px;height:15px;display:inline-block;margin-right:8px;"></span>Bande cyclable</div>
+      <div><span style="background:red;width:15px;height:15px;display:inline-block;margin-right:8px;"></span>Chaucidou</div>
+    `;
+
+    return div;
+  };
+
+  legend.addTo(map);
 
 });
 </script>
