@@ -160,8 +160,8 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .catch(err => console.log(err));
 
-  // Légende
-  var legend = L.control({ position: "bottomright" });
+  // Légende en haut à droite
+  var legend = L.control({ position: "topright" });
 
   legend.onAdd = function (map) {
     var div = L.DomUtil.create("div", "info legend");
