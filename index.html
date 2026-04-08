@@ -176,22 +176,19 @@ document.addEventListener("DOMContentLoaded", function () {
         else return "black";
       }
 
-      L.geoJSON(data, {
-        pointToLayer: function(feature, latlng) {
-          let nom = feature.properties["Nom du bâtiment"] || "";
-          return L.circleMarker(latlng, {
-            radius: 7,
-            fillColor: getColor(nom),
-            color: "#000",
-            weight: 1,
-            fillOpacity: 0.9
-          });
-        },
-        onEachFeature: function(feature, layer) {
-          let nom = feature.properties["Nom du bâtiment"];
-          layer.bindPopup(nom || "Lieu inconnu");
-        }
-      }).addTo(map);
+      data.features.forEach(function(feature) {
+        let coords = feature.geometry.coordinates[0];
+        let latlng = L.latLng(coords[1], coords[0]);
+        let nom = feature.properties["Nom du bâtiment"] || "Lieu inconnu";
+
+        L.circleMarker(latlng, {
+          radius: 7,
+          fillColor: getColor(nom),
+          color: "#000",
+          weight: 1,
+          fillOpacity: 0.9
+        }).bindPopup(nom).addTo(map);
+      });
 
     })
     .catch(err => console.log(err));
