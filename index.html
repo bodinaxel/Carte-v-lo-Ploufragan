@@ -155,56 +155,47 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .catch(err => console.log(err));
 
-// -------------------------
-// LIEUX NOTABLES
-// -------------------------
-fetch("lieuxnotables.geojson")
-  .then(res => res.json())
-  .then(data => {
+  // -------------------------
+  // LIEUX NOTABLES
+  // -------------------------
+  fetch("lieuxnotables.geojson")
+    .then(res => res.json())
+    .then(data => {
 
-    function getColor(nom) {
-      if (!nom) return "black"; // 🔥 évite le crash
+      function getColor(nom) {
+        if (!nom) return "black";
 
-      nom = nom.toLowerCase().trim();
+        nom = nom.toLowerCase().trim();
 
-      if (nom === "ehpad") return "green";
-      else if (nom === "le pollen") return "blue";
-      else if (nom === "mairie") return "orange";
-      else if (nom === "centre technique municipal") return "red";
-      else if (nom === "le tremplin") return "yellow";
-      else if (nom === "espace victor hugo") return "purple";
-      else return "black";
-    }
-
-    L.geoJSON(data, {
-
-      pointToLayer: function(feature, latlng) {
-
-        let nom = feature.properties["Nom du bâtiment"] || "";
-
-        return L.circleMarker(latlng, {
-          radius: 7,
-          fillColor: getColor(nom),
-          color: "#000",
-          weight: 1,
-          fillOpacity: 0.9
-        });
-      },
-
-      onEachFeature: function(feature, layer) {
-        let nom = feature.properties["Nom du bâtiment"];
-
-        if (nom) {
-          layer.bindPopup(nom);
-        } else {
-          layer.bindPopup("Lieu inconnu");
-        }
+        if (nom === "ehpad") return "green";
+        else if (nom === "le pollen") return "blue";
+        else if (nom === "mairie") return "orange";
+        else if (nom === "centre technique municipal") return "red";
+        else if (nom === "le tremplin") return "yellow";
+        else if (nom === "espace victor hugo") return "purple";
+        else return "black";
       }
 
-    }).addTo(map);
+      L.geoJSON(data, {
+        pointToLayer: function(feature, latlng) {
+          let nom = feature.properties["Nom du bâtiment"] || "";
+          return L.circleMarker(latlng, {
+            radius: 7,
+            fillColor: getColor(nom),
+            color: "#000",
+            weight: 1,
+            fillOpacity: 0.9
+          });
+        },
+        onEachFeature: function(feature, layer) {
+          let nom = feature.properties["Nom du bâtiment"];
+          layer.bindPopup(nom || "Lieu inconnu");
+        }
+      }).addTo(map);
 
-  })
-  .catch(err => console.log(err));
+    })
+    .catch(err => console.log(err));
+
   // -------------------------
   // LEGENDE
   // -------------------------
@@ -223,12 +214,12 @@ fetch("lieuxnotables.geojson")
       <hr>
 
       <h4>Lieux notables</h4>
-      <div><span style="background:gray;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Centre Technique Municipal</div>
-      <div><span style="background:red;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>EPHAD</div>
-      <div><span style="background:blue;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Mairie</div>
-      <div><span style="background:orange;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Le Tremplin</div>
+      <div><span style="background:red;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Centre Technique Municipal</div>
+      <div><span style="background:green;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>EPHAD</div>
+      <div><span style="background:orange;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Mairie</div>
+      <div><span style="background:yellow;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Le Tremplin</div>
       <div><span style="background:purple;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Espace Victor Hugo</div>
-      <div><span style="background:green;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Le Pollen</div>
+      <div><span style="background:blue;width:12px;height:12px;border-radius:50%;display:inline-block;margin-right:8px;"></span>Le Pollen</div>
     `;
 
     return div;
