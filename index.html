@@ -155,42 +155,50 @@ document.addEventListener("DOMContentLoaded", function () {
     })
     .catch(err => console.log(err));
 
-  // -------------------------
-  // LIEUX NOTABLES
-  // -------------------------
-  fetch("lieuxnotables.geojson")
-    .then(res => res.json())
-    .then(data => {
+// -------------------------
+// LIEUX NOTABLES
+// -------------------------
+fetch("lieuxnotables.geojson")
+  .then(res => res.json())
+  .then(data => {
 
-      L.geoJSON(data, {
-        style: function(feature) {
-          let lieuxnotables = feature.properties["Nom du bâtiment"];
-          let color = "purple";
+    function getColor(nom) {
+      nom = nom.toLowerCase().trim();
 
-          if (typeTrace === "EPHAD") color = "green";
-          else if (typeTrace === "Le Pollen") color = "blue";
-          else if (typeTrace === "Mairie") color = "orange";
-          else if (typeTrace === "Centre Technique Municipal") color = "red";
-         else if (typeTrace === "Le Tremplin") color = "yellow";
-          return {
-            color: color,
-            weight: 4
-          };
+      if (nom === "ehpad") return "green";
+      else if (nom === "le pollen") return "blue";
+      else if (nom === "mairie") return "orange";
+      else if (nom === "centre technique municipal") return "red";
+      else if (nom === "le tremplin") return "yellow";
+      else if (nom === "espace victor hugo") return "purple";
+      else return "black";
+    }
+
+    L.geoJSON(data, {
+
+      pointToLayer: function(feature, latlng) {
+        let nom = feature.properties["Nom du bâtiment"];
+
+        return L.circleMarker(latlng, {
+          radius: 7,
+          fillColor: getColor(nom),
+          color: "#000",
+          weight: 1,
+          fillOpacity: 0.9
+        });
+      },
+
+      onEachFeature: function(feature, layer) {
+        let nom = feature.properties["Nom du bâtiment"];
+        if (nom) {
+          layer.bindPopup(nom);
         }
-      }).addTo(map);
-    })
+      }
 
-        onEachFeature: function(feature, layer) {
-          if (feature.properties.nom) {
-            layer.bindPopup(feature.properties.nom);
-          }
-        }
+    }).addTo(map);
 
-      }).addTo(map);
-
-    })
-    .catch(err => console.log(err));
-
+  })
+  .catch(err => console.log(err));
   // -------------------------
   // LEGENDE
   // -------------------------
